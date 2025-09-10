@@ -1,8 +1,26 @@
-﻿namespace Reservation.Models
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
+
+namespace Reservation.Models
 {
-    public class TransactionViewModel
+    public class Transaction
     {
+        [Key]
+        public int TransactionId { get; set; }
 
-    }//end of class
+        [Required]
+        public DateTime Date { get; set; }
 
-}//end of nmspc
+        [Column(TypeName = "decimal(12,2)")]
+        public decimal TotalAmount { get; set; }
+
+        [MaxLength(50)]
+        public string Status { get; set; }
+
+        //link to reservation one to one
+        public int ID { get; set; }
+        public BookingViewModel BookingViewModel { get; set; }
+    }
+}

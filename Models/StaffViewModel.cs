@@ -1,8 +1,17 @@
-﻿namespace Reservation.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Reservation.Models
 {
-    public class StaffViewModel
+    public class Staff
     {
+        [Key]
+        public int StaffId { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string StaffName { get; set; }
 
-    }//end of class
+        //staff can create many bookings
+        public ICollection<BookingViewModel> BookingViewModel { get; set; }
 
-}//end of nmspc
+    }
+}
