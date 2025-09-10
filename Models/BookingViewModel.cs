@@ -11,7 +11,9 @@ namespace Reservation.Models
         public DateTime BookingTime { get; set; }
         public int CustomerCount { get; set; }
         public string? CustomerName { get; set; }       // ? = property is nullable
-        public int CustomerPhoneNo { get; set; }
+        [Phone]
+        [MaxLength(15)]
+        public string? CustomerPhoneNo { get; set; }
 
     }//end of class
 

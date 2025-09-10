@@ -2,6 +2,8 @@ html {
   font-size: 14px;
 }
 
+
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
@@ -19,4 +21,64 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+.websiteTitle {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+}
+
+.hpReservationTitle {
+    font-size: 200px;
+    color: #C9575E;
+    font-family: Forte;
+}
+
+.calendarContainer {
+    padding: 20px;
+    background-color: #efefef;
+    border-radius: 20px;
+    margin-top: 50px
+}
+
+.calendarTitle {
+    font-family: fantasy;
+    font-weight: 600;
+    color: #313131
+}
+
+.btn-primary {
+    background-color: #C9575E !important;
+    border-color: #C9575E !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #b3464c !important;
+    border-color: #a93f45 !important;
+}
+
+.btn-outline-primary {
+    color: #C9575E !important;
+    border-color: #C9575E !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background-color: #C9575E !important;
+    border-color: #C9575E !important;
+    color: white !important;
+}
+
+.view-options .btn-outline-primary.active {
+    background-color: #C9575E !important;
+    border-color: #C9575E !important;
+    color: white !important;
+}
+
+.view-options .btn-outline-primary:focus {
+    box-shadow: 0 0 0 0.1rem rgba(201, 87, 94, 0.5) !important;
 }
