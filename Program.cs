@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace Reservation
 {
     public class Program
@@ -8,6 +10,16 @@ namespace Reservation
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.AccessDeniedPath = "/Account/AcessDenied";
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                });
+
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -23,6 +35,8 @@ namespace Reservation
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
