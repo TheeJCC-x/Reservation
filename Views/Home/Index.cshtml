@@ -1,8 +1,64 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to the reservation system</h1>
-    <p>You are logged in as <strong>@User.Identity.Name</strong></p>
+<div class="text-center"> <!-- Main container for the webpage -->
+    <h1 class="hpReservationTitle">Réservation</h1> <!-- Website Heading -->
 </div>
+
+<div class="text-center"> <!-- Division for centering text (Bootstrap Component) -->
+    <h1 class="display-4">Your command center for the perfect dining room</h1> <!-- Sub Heading -->
+</div>
+
+<div class="calendarContainer"> <!-- Calendar container that will contain the booking calendar contents -->
+    <div class="d-flex justify-content-between align-content-center mb-4"> <!-- Division for the calendar contents (Bootstrap Component) -->
+        <h1 class="calendarTitle">Booking Calendar</h1> <!-- Calendar Heading -->
+        <div>
+            <button id="prev-btn" class="btn btn-outline-primary btn-sm"> <!-- Button (Bootstrap Component) -->
+                <i class="fas fa-chevron-left"></i> <!-- Left Arrow Chevron Navigation (Font Awesome Icon) -->
+            </button>
+            <button id="next-btn" class="btn btn-outline-primary btn-sm"> <!-- Button (Bootstrap Component) -->
+                <i class="fas fa-chevron-right"></i> <!-- Right Arrow Chevron Navigation (Font Awesome Icon) -->
+             </button>
+            <button id="today-btn" class="btn btn-primary btn-sm">Today</button> <!-- Button (Bootstrap Component) -->
+            <button id="add-booking-btn" class="btn btn-success ms-2"><i class="fas fa-plus"></i> New Booking</button> <!-- New booking button + Font Awesome Icon -->
+        </div>
+    </div>
+
+    <div class="view-options mb-3"> <!-- Division for time grid (Month, Week, Day, List) -->
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-outline-primary" data-view="dayGridMonth">Month</button> <!-- Month button Navigation (using Bootstrap components) -->
+            <button type="button" class="btn btn-outline-primary" data-view="timeGridWeek">Week</button> <!-- Week button Navigation (using Bootstrap components) -->
+            <button type="button" class="btn btn-outline-primary" data-view="timeGridDay">Day</button> <!-- Day button Navigation (using Bootstrap components) -->
+            <button type="button" class="btn btn-outline-primary" data-view="listWeek">List</button> <!-- List button Navigation (using Bootstrap components) -->
+        </div>
+    </div>
+
+    <div id="calendar" class="booking-calendar"></div> <!-- Division container for the Calendar -->
+</div>
+
+<!-- JavaScript for rendering the calendar using the FullCalendar.io library (CDN in the _Layout.cshtml file) -->
+ @section Scripts {
+     <script>
+         document.addEventListener('DOMContentLoaded', function() {
+             var calendarE1 = document.getElementById('calendar');
+             var calendar = new FullCalendar.Calendar(calendarE1, {
+                 initialView: 'dayGridMonth',
+                 headerToolbar: false,
+                 height: 'auto',
+                 nowIndicator: true,
+                 slotMinTime: '16:00:00',
+                 slotMaxTime: '22:30:00',
+                 businessHours: {
+                     daysOfWeek: [1, 2, 3, 4, 5, 6],
+                     startTime: '16:00',
+                     endTime: '22:30',
+                 },
+                 events: [
+
+                 ]
+             });
+             calendar.render();
+         });
+     </script>
+ }
