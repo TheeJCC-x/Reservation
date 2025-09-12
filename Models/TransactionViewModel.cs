@@ -11,13 +11,13 @@ namespace Reservation.Models
         public int TransactionId { get; set; }
 
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime Date { get; set; } = DateTime.Now;
 
         [Column(TypeName = "decimal(12,2)")]
         public decimal TotalAmount { get; set; }
 
         [MaxLength(50)]
-        public string Status { get; set; }
+        public string Status { get; set; }      //e.g. Created, Updated, Cancelled 
 
         //link to reservation one to one
         public int ID { get; set; }

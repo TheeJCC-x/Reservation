@@ -15,6 +15,8 @@ namespace Reservation.Models
         [MaxLength(15)]
         public string? CustomerPhoneNo { get; set; }
 
+        public ICollection<Transaction> Transaction { get; set; }
+
     }//end of class
 
 }//end of nmspc
