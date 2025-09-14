@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Reservation.Models.BookingViewModel>
+
+<h1>Bookings</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Customer Name</th>
+            <th>Phone</th>
+            <th>Number of Customers</th>
+            <th>Table</th>
+            <th>Staff</th>
+            <th>Date</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.CustomerName</td>
+                <td>@booking.CustomerPhoneNo</td>
+                <td>@booking.CustomerCount</td>
+                <td>@booking.Table.TableNumber</td>
+                <td>@booking.Staff.StaffName</td>
+                <td>@booking.BookingDate.ToShortDateString()</td>
+                <td>@booking.BookingTime.ToShortTimeString()</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

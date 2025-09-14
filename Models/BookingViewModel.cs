@@ -5,18 +5,23 @@ namespace Reservation.Models
     public class BookingViewModel
     {
         public int Id { get; set; }
-        [DataType(DataType.Date)]                       //represents a date value
+        [DataType(DataType.Date)]
         public DateTime BookingDate { get; set; }
-        [DataType(DataType.Time)]                       //represents a time value
+        [DataType(DataType.Time)]
         public DateTime BookingTime { get; set; }
         public int CustomerCount { get; set; }
-        public string? CustomerName { get; set; }       // ? = property is nullable
+        public string? CustomerName { get; set; }
         [Phone]
         [MaxLength(15)]
         public string? CustomerPhoneNo { get; set; }
 
-        public ICollection<Transaction> Transaction { get; set; }
+        // Foreign keys
+        public int TableId { get; set; }
+        public int? StaffId { get; set; }
 
-    }//end of class
-
-}//end of nmspc
+        // Navigation properties
+        public TableViewModel? Table { get; set; }
+        public Staff? Staff { get; set; }
+        public ICollection<Transaction>? Transactions { get; set; }
+    }
+}

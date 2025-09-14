@@ -19,8 +19,10 @@ namespace Reservation.Models
         [MaxLength(50)]
         public string Status { get; set; }      //e.g. Created, Updated, Cancelled 
 
-        //link to reservation one to one
-        public int ID { get; set; }
-        public BookingViewModel BookingViewModel { get; set; }
+        // Foreign key - rename for consistency
+        public int BookingId { get; set; }
+
+        // Navigation property
+        public BookingViewModel Booking { get; set; }
     }
 }
