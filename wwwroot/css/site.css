@@ -35,13 +35,6 @@ body {
     font-family: Forte;
 }
 
-.calendarContainer {
-    padding: 20px;
-    background-color: #efefef;
-    border-radius: 20px;
-    margin-top: 50px
-}
-
 .calendarTitle {
     font-family: fantasy;
     font-weight: 600;
@@ -81,4 +74,248 @@ body {
 
 .view-options .btn-outline-primary:focus {
     box-shadow: 0 0 0 0.1rem rgba(201, 87, 94, 0.5) !important;
+}
+
+.view-options .btn-outline-primary:hover {
+    background-color: #b3464c !important;
+    color: white !important;
+    transition: 0.2s;
+}
+
+.calendarContainer {
+    padding: 30px;
+    background: rgb(238, 238, 238);
+    border-radius: 20px;
+    margin-top: 50px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+}
+
+.fc .fc-toolbar {
+    padding: 1.5rem;
+    background: #ffffff;
+    border-radius: 15px;
+    margin-bottom: 1.5rem !important;
+    border: 1px solid #e9ecef;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #313131;
+    font-family: fantasy;
+}
+
+/* Calendar buttons */
+.fc .fc-button {
+    background: #6c757d !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0.6rem 1.2rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    font-family: inherit;
+}
+
+    .fc .fc-button:hover {
+        background: #5a6268 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+    background: #C9575E !important;
+    border-color: #C9575E !important;
+}
+
+/* Calendar grid */
+.fc .fc-daygrid-day {
+    border: 1px solid #dee2e6 !important;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+    .fc .fc-daygrid-day:hover {
+        background-color: rgba(0,0,0,0.1) !important;
+        transform: scale(1.01);
+    }
+
+.fc .fc-day-today {
+    background-color: #ffe6e8 !important;
+}
+
+.fc .fc-daygrid-day-number {
+    font-weight: 600;
+    color: #313131;
+    padding: 0.5rem;
+}
+
+/* Event styling */
+.fc-event {
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.3rem 0.6rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1) !important;
+    transition: all 0.3s ease !important;
+    border-left: 4px solid rgba(0,0,0,0.2) !important;
+}
+
+    .fc-event:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.2) !important;
+    }
+.fc-event {
+    background: linear-gradient(135deg, #C9575E 0%, #b3464c 100%) !important;
+    color: white !important;
+}
+
+.fc-event-large {
+    background: linear-gradient(135deg, #8a3c42 0%, #6e2f34 100%) !important;
+}
+
+.fc-event-small {
+    background: linear-gradient(135deg, #e67e85 0%, #d46a71 100%) !important;
+}
+
+/* Time grid */
+.fc .fc-timegrid-slot {
+    height: 2.8rem !important;
+    background: #f8f9fa;
+}
+
+.fc .fc-timegrid-slot-label {
+    background: #ffffff;
+    border-right: 1px solid #dee2e6;
+}
+
+/* Business hours */
+.fc .fc-non-business {
+    background-color: #f8f9fa !important;
+}
+
+/* Day headers */
+.fc .fc-col-header-cell {
+    background: linear-gradient(135deg, #C9575E 0%, #b3464c 100%);
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.fc .fc-col-header-cell-cushion {
+    color: white;
+    text-decoration: none;
+}
+
+/* List View Specific Styling */
+.fc .fc-list-event {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.5rem !important;
+    transition: all 0.3s ease !important;
+}
+
+    .fc .fc-list-event:hover {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(201, 87, 94, 0.2) !important;
+        border-color: #C9575E !important;
+    }
+
+.fc .fc-list-event-dot {
+    border-color: #C9575E !important;
+    border-width: 3px !important;
+}
+
+.fc .fc-list-event-time {
+    color: #C9575E !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+}
+
+.fc .fc-list-event-title {
+    color: #313131 !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+}
+
+.fc .fc-list-event-graphic {
+    padding-right: 1rem !important;
+}
+
+/* List Day Headers */
+.fc .fc-list-day-cushion {
+    background: linear-gradient(135deg, #C9575E 0%, #b3464c 100%) !important;
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    padding: 1rem !important;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.fc .fc-list-day-text {
+    color: white !important;
+    font-weight: 700 !important;
+}
+
+.fc .fc-list-day-side-text {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* List Section Headers */
+.fc .fc-list-table {
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fc .fc-list-empty {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    color: #6c757d !important;
+    padding: 3rem !important;
+    border-radius: 10px !important;
+}
+
+.fc .fc-list-empty-text {
+    font-size: 1.2rem !important;
+    font-weight: 500 !important;
+}
+
+/* List View Container */
+.fc .fc-list-view {
+    border-radius: 10px !important;
+    border: 1px solid #dee2e6 !important;
+    background: white !important;
+    padding: 1rem !important;
+}
+
+/* Responsive List View */
+@media (max-width: 768px) {
+    .fc .fc-list-event {
+        padding: 0.8rem !important;
+    }
+
+    .fc .fc-list-event-time,
+    .fc .fc-list-event-title {
+        font-size: 0.9rem !important;
+    }
+
+    .fc .fc-list-day-cushion {
+        padding: 0.8rem !important;
+        font-size: 1rem !important;
+    }
+}
+
+.fc-list-event.large-party {
+    border-left: 4px solid #8a3c42 !important;
+}
+
+.fc-list-event.small-party {
+    border-left: 4px solid #e67e85 !important;
+}
+
+.fc-list-event.standard-party {
+    border-left: 4px solid #C9575E !important;
 }

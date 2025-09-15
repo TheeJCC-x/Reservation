@@ -22,7 +22,7 @@ namespace Reservation.Controllers
         // GET: TableViewModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TableViewModel.ToListAsync());
+            return View(await _context.Tables.ToListAsync());
         }
 
         // GET: TableViewModels/Details/5
@@ -33,7 +33,7 @@ namespace Reservation.Controllers
                 return NotFound();
             }
 
-            var tableViewModel = await _context.TableViewModel
+            var tableViewModel = await _context.Tables
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tableViewModel == null)
             {
@@ -73,7 +73,7 @@ namespace Reservation.Controllers
                 return NotFound();
             }
 
-            var tableViewModel = await _context.TableViewModel.FindAsync(id);
+            var tableViewModel = await _context.Tables.FindAsync(id);
             if (tableViewModel == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace Reservation.Controllers
                 return NotFound();
             }
 
-            var tableViewModel = await _context.TableViewModel
+            var tableViewModel = await _context.Tables
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tableViewModel == null)
             {
@@ -139,10 +139,10 @@ namespace Reservation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tableViewModel = await _context.TableViewModel.FindAsync(id);
+            var tableViewModel = await _context.Tables.FindAsync(id);
             if (tableViewModel != null)
             {
-                _context.TableViewModel.Remove(tableViewModel);
+                _context.Tables.Remove(tableViewModel);
             }
 
             await _context.SaveChangesAsync();
@@ -151,7 +151,7 @@ namespace Reservation.Controllers
 
         private bool TableViewModelExists(int id)
         {
-            return _context.TableViewModel.Any(e => e.Id == id);
+            return _context.Tables.Any(e => e.Id == id);
         }
     }
 }

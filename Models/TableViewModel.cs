@@ -7,9 +7,6 @@
         public int Seats { get; set; }
         public bool Availability { get; set; }
 
-        // many reservations can link this table
-        public ICollection<BookingViewModel> Bookings { get; set; }
-
-    }//end of class
-
-}//end of nmspc
+        public ICollection<BookingViewModel>? Bookings { get; set; }
+    }
+}

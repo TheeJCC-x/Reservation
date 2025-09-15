@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.Controllers
+@{
+    var controller = (ViewContext.ActionDescriptor as ControllerActionDescriptor)?.ControllerName;
+    var action = (ViewContext.ActionDescriptor as ControllerActionDescriptor)?.ActionName;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -28,6 +34,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark @(controller == "Bookings" && action == "Index" ? "active" : "")"
+                                   asp-controller="Bookings" asp-action="Index">Bookings</a>
+                            </li>
+                        }
                     </ul>
 
                     <ul class="navbar-nav ms-auto">
