@@ -15,8 +15,8 @@ namespace Reservation.Services
 
         public Task<bool> ValidateCredentialAsync(string username, string password)
         {
-            var configuredUser = _config["Auth:Admin"];
-            var configuredPass = _config["Auth:Password"];
+            var configuredUser = _config["Auth:admin"];
+            var configuredPass = _config["Auth:password"];
             
             return Task.FromResult(username == configuredUser && password == configuredPass);
         }
