@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Reservation.Data;
+using Reservation.Services;
 
 namespace Reservation
 {
@@ -13,8 +14,12 @@ namespace Reservation
             builder.Services.AddDbContext<ReservationContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("ReservationContext") ?? throw new InvalidOperationException("Connection string 'ReservationContext' not found.")));
 
-            // Add services to the container.
+
+            // Add services to the container
             builder.Services.AddControllersWithViews();
+
+            //auth service 
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>

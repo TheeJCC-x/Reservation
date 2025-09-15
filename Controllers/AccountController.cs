@@ -2,16 +2,18 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Reservation.Models;
+using Reservation.Services;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Reservation.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IConfiguration _config;
-        public AccountController(IConfiguration config)
+        private readonly IAuthService _authService;
+        public AccountController(IAuthService authService)
         {
-            _config = config;
+            _authService = authService;
         }
 
         [HttpGet]
@@ -29,10 +31,9 @@ namespace Reservation.Controllers
 
             if (!ModelState.IsValid) return View(model);
 
-            var configuredUser = _config["Auth:Username"];
-            var configuredPass = _config["Auth:Password"];
+            var isValid = await _authService.ValidateCredentialAsync(model.Username, model.Password);
 
-            if (model.Username == configuredUser && model.Password == configuredPass)
+            if (isValid)
             {
                 var claims = new List<Claim>
                 {
