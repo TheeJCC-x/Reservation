@@ -1,0 +1,61 @@
+﻿@model Reservation.Models.ViewModels.DayLayoutViewModel
+
+<div class="p-3">
+    <h5 class="mb-3">Availability for @Model.Date.ToString("dddd, dd MMM yyyy")</h5>
+
+    <div class="table-grid">
+        @foreach (var t in Model.Tables.OrderBy(tbl => tbl.Seats).ThenBy(tbl => tbl.TableNumber))
+        {
+            // ensure class name uses server-side boolean
+            var isAvailable = t.IsAvailable;
+            var colorClass = isAvailable ? "table-available" : "table-occupied";
+
+            <div class="table-card seats-@t.Seats @colorClass"
+                 data-table-id="@t.TableID"
+                 data-seats="@t.Seats"
+                 data-available="@isAvailable.ToString().ToLowerInvariant()"
+                 onclick="handleTableClick('@t.TableID', '@isAvailable', '@Model.Date.ToString("yyyy-MM-dd")')">
+                <div class="table-top">Table @t.TableNumber</div>
+                <!-- seat count inside the "shape" -->
+                <div class="table-shape">@t.Seats</div>
+            </div>
+        }
+    </div>
+
+    <hr />
+
+    <div class="mt-3 availability-summary">
+        @foreach (var kv in Model.SummaryBySeats.OrderBy(k => k.Key))
+        {
+            <span class="me-3">@kv.Key seats: @kv.Value.available/@kv.Value.total</span>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function handleTableClick(tableId, isAvailable, date) {
+            // when Razor prints a boolean it might be "True"/"False" — normalize here
+            var avail = String(isAvailable).toLowerCase();
+            if (avail === 'true') {
+                window.location.href = '/Bookings/Create?date=' + date + '&tableId=' + tableId;
+            } else {
+                alert('This table is occupied on ' + date);
+            }
+        }
+
+        // Optional client-side fallback: ensure elements with data-available attribute get correct class
+        (function normalizeTableClasses() {
+            document.querySelectorAll('.table-card').forEach(function(el) {
+                var avail = el.dataset.available;
+                if (avail === 'true') {
+                    el.classList.remove('table-occupied');
+                    el.classList.add('table-available');
+                } else {
+                    el.classList.remove('table-available');
+                    el.classList.add('table-occupied');
+                }
+            });
+        })();
+    </script>
+}

@@ -53,6 +53,13 @@
     <div id="calendar" class="booking-calendar"></div>
 </div>
 
+<!-- Modal for day layout -->
+<div class="modal fade" id="dayModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
 <!-- JavaScript for rendering the calendar using the FullCalendar.io library (CDN in the _Layout.cshtml file) -->
 @section Scripts {
     <script>
@@ -86,8 +93,17 @@
                 eventClick: function(info) {
                     showBookingDetails(info.event);
                 },
+                // REPLACED dateClick handler with fetch-based version
                 dateClick: function(info) {
-                    openBookingModal(info.dateStr);
+                    fetch('/Bookings/DayLayout?date=' + info.dateStr)
+                        .then(r => r.text())
+                        .then(html => {
+                            document.querySelector('#dayModal .modal-content').innerHTML = html;
+                            var modalEl = document.getElementById('dayModal');
+                            var modal = new bootstrap.Modal(modalEl);
+                            modal.show();
+                        })
+                        .catch(e => { console.error(e); alert('Could not load day layout.'); });
                 }
             });
 

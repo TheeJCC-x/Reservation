@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering; // MAKE SURE THIS USING IS ADDED
 using Microsoft.EntityFrameworkCore;
 using Reservation.Data;
 using Reservation.Models;
+using Reservation.Models.ViewModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Reservation.Controllers
 {
@@ -19,13 +21,16 @@ namespace Reservation.Controllers
         }
 
         // GET: Bookings/Create
-        public IActionResult Create()
+        public IActionResult Create(DateTime? date, int? tableID)
         {
-            // Populate ViewBag with SelectLists for dropdowns
             ViewBag.TableList = new SelectList(_context.Tables.Where(t => t.Availability), "Id", "TableNumber");
             ViewBag.StaffList = new SelectList(_context.Staff, "StaffId", "StaffName");
 
-            return View();
+            var model = new BookingViewModel();
+            if (date.HasValue) model.BookingDate = date.Value;
+            if (tableID.HasValue) model.TableId = tableID.Value;
+            return View(model);
+
         }
 
         // POST: Bookings/Create
@@ -35,6 +40,18 @@ namespace Reservation.Controllers
         {
             if (ModelState.IsValid)
             {
+                var conflict = _context.Bookings.Any(b => b.TableId == booking.TableId && b.BookingDate.Date == booking.BookingDate.Date);
+                if (conflict)
+                {
+                    ModelState.AddModelError("", "This table is no longer availible.");
+
+                    ViewBag.TableList = new SelectList(_context.Tables.Where(t => t.Availability), "Id", "TableNumber");
+                    ViewBag.StaffList = new SelectList(_context.Staff, "StaffId", "StaffName");
+
+                    return View(booking);
+                }
+
+
                 _context.Add(booking);
                 await _context.SaveChangesAsync();
 
@@ -93,6 +110,50 @@ namespace Reservation.Controllers
                 .ToListAsync();
 
             return View(bookings);
+        }
+
+        // Controller action to return a partial view for a given date
+        [HttpGet]
+        public async Task<IActionResult> DayLayout(DateTime date)
+        {
+            // Load all tables
+            var tables = await _context.Tables.ToListAsync();
+
+            // Load bookings for that date (day-level). If you need time-slot overlap checks, adjust later.
+            var bookingsOnDate = await _context.Bookings
+                .Where(b => b.BookingDate.Date == date.Date)
+                .ToListAsync();
+
+            // Build the DayLayoutViewModel
+            var vm = new Reservation.Models.ViewModels.DayLayoutViewModel
+            {
+                Date = date
+            };
+
+            foreach (var t in tables.OrderBy(t => t.TableNumber))
+            {
+                var booked = bookingsOnDate.FirstOrDefault(b => b.TableId == t.Id);
+
+                vm.Tables.Add(new Reservation.Models.ViewModels.TableAvailabilityDto
+                {
+                    TableID = t.Id,
+                    TableNumber = t.TableNumber,
+                    Seats = t.Seats,
+                    IsAvailable = booked == null,
+                    BookingId = booked?.Id
+                });
+            }
+
+            // compute summary: available / total for each seat-size
+            vm.SummaryBySeats = vm.Tables
+                .GroupBy(x => x.Seats)
+                .ToDictionary(
+                    g => g.Key,
+                    g => (available: g.Count(x => x.IsAvailable), total: g.Count())
+                );
+
+            // return partial view that is strongly-typed to DayLayoutViewModel
+            return PartialView("_DayLayout", vm);
         }
     }
 }

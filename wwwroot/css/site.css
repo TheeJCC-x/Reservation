@@ -319,3 +319,103 @@ body {
 .fc-list-event.standard-party {
     border-left: 4px solid #C9575E !important;
 }
+
+.table-grid {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1rem;
+    justify-items:center;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.table-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    jusity-content: center;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    transition: transform .12s ease;
+    test-align: center;
+    user-select: none;
+    padding: 0.6rem;
+}
+
+.table-card:hover {transform: translateY(-6px); box-shadow: 0 12px 20px rgba(0,0,0,0.18); }
+
+.seats-2 {
+    width: 90px;
+    height: 60px;
+    border-radius: 10px;
+}
+
+.seats-4 {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+}
+
+.seats-6 {
+    width: 160px;
+    height: 80px;
+    border-radius: 10px;
+}
+
+.seats-8 {
+    width: 200px;
+    height: 90px;
+    border-radius: 10px;
+}
+
+.table-top {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: .35rem;
+    color: rgba(255,255,255,0.95);
+}
+
+.table-shape {
+    font-weight: 800;
+    font-size: 1.25rem;
+    opacity: 0.98;
+    line-height: 1;
+}
+
+.table-available, .table-available .table-shape, .table-available .table-top{
+    background: linear-gradient(135deg,#28a745,#1e7e34);
+    background-clip: padding-box;
+}
+
+.table-occupied, .table-occupied .table-shape, .table-occupied .table-top{
+    background: linear-gradient(135deg,#dc3545,#b02a37);
+}
+
+.table-available, .table-occupied {
+    color: #fff !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg,#28a745,#1e7e34) !importamt;
+    color: #fff !important;
+}
+
+.bg-danger { 
+    background: linear-gradient(135deg,#dc3545,#b02a37) !important;
+    color: #fff !important;
+}
+
+.table-card .table-shape {
+    display.flex;
+    align-items:center;
+    justify-content:center;
+    width: 100%;
+    height: 100%;
+}
+
+.availability-summary { 
+    font-weight: 600;
+    color: #333;
+    margin-top: 05rem;
+}
