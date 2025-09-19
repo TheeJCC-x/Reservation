@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Reservation.Data;
 using Reservation.Services;
+using Reservation.Models;
+using Reservation.Seeding;
 
 namespace Reservation
 {
@@ -32,6 +34,14 @@ namespace Reservation
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
+
+            //Initialize data into database     -   Jene 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                SeedData.Initialize(services);
+            }
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

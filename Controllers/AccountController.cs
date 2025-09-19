@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Azure.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Reservation.Data;
 using Reservation.Models;
 using Reservation.Services;
 using System.Security.Claims;
@@ -10,8 +13,8 @@ namespace Reservation.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IAuthService _authService;
-        public AccountController(IAuthService authService)
+        private readonly ReservationContext _authService;
+        public AccountController(ReservationContext authService)
         {
             _authService = authService;
         }
@@ -25,42 +28,39 @@ namespace Reservation.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login(string username, string password, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
 
-            if (!ModelState.IsValid) return View(model);
+            var isValid = await _authService.Account.FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
 
-            var isValid = await _authService.ValidateCredentialAsync(model.Username, model.Password);
-
-            if (isValid)
+            if (isValid == null)
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, model.Username),
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                var authProperties = new AuthenticationProperties
-                {
-                    IsPersistent = model.RememberMe,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60)
-                };
-
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
-
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    return Redirect(returnUrl);
-
-                return RedirectToAction("Index", "Home");
+                return View();
             }
 
-            ModelState.AddModelError("", "Invalid username or password,");
-            return View(model);
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, username),
+                };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            //var authProperties = new AuthenticationProperties
+            //{
+            //    //IsPersistent = _authService.Account.RememberMe,
+            //    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60)
+            //};
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity)
+                );
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpPost]

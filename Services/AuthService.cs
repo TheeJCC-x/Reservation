@@ -17,7 +17,7 @@ namespace Reservation.Services
         {
             var configuredUser = _config["Auth:admin"];
             var configuredPass = _config["Auth:password"];
-            
+
             return Task.FromResult(username == configuredUser && password == configuredPass);
         }
     }

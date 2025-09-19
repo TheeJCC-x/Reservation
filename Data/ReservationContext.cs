@@ -15,6 +15,8 @@ namespace Reservation.Data
         public DbSet<BookingViewModel> Bookings { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Account> Account { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
