@@ -1,70 +1,71 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Reservation.Data;
-using Reservation.Services;
-using Reservation.Models;
 using Reservation.Seeding;
 
-namespace Reservation
+public class Program
 {
-    public class Program
+    public static async Task Main(string[] args)  // <----- Application entry point
     {
-        public static void Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);  // <----- Create app builder
+
+        // -- Setup database connection -- //
+        builder.Services.AddDbContext<ReservationContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("ReservationContext")));
+
+        builder.Services.AddControllersWithViews();  // <----- Add MVC support
+
+        // -- Configure authentication with cookies -- //
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";  // <----- Login page
+                options.AccessDeniedPath = "/Account/AccessDenied";  // <----- Access denied page
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);  // <----- Cookie expiration
+            });
+
+        var app = builder.Build();  // <----- Build application
+
+        // -- Ensure database exists -- //
+        using (var scope = app.Services.CreateScope())
         {
-            var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddDbContext<ReservationContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("ReservationContext") ?? throw new InvalidOperationException("Connection string 'ReservationContext' not found.")));
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<ReservationContext>();
+            context.Database.EnsureCreated();  // <----- Create database if missing
+        }
 
-
-            // Add services to the container
-            builder.Services.AddControllersWithViews();
-
-            //auth service 
-            builder.Services.AddScoped<IAuthService, AuthService>();
-
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = "/Account/Login";
-                    options.AccessDeniedPath = "/Account/AcessDenied";
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-                });
-
-            builder.Services.AddAuthorization();
-
-            var app = builder.Build();
-
-            //Initialize data into database     -   Jene 
-            using (var scope = app.Services.CreateScope())
+        // -- Seed database with sample data -- //
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            try
             {
-                var services = scope.ServiceProvider;
-
-                SeedData.Initialize(services);
+                Console.WriteLine("Starting database seeding...");  // <----- Start seeding
+                await SeedData.Initialize(services);  // <----- Run seed data
+                Console.WriteLine("Database seeding completed.");  // <----- Completion message
             }
-
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
+            catch (Exception ex)
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                Console.WriteLine($"Seeding error: {ex.Message}");  // <----- Error handling
             }
+        }
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+        // -- Configure HTTP pipeline -- //
+        if (!app.Environment.IsDevelopment())  // <----- Production settings
+        {
+            app.UseExceptionHandler("/Home/Error");  // <----- Error page
+            app.UseHsts();  // <----- HTTPS enforcement
+        }
 
-            app.UseRouting();
+        app.UseHttpsRedirection();  // <----- HTTPS redirect
+        app.UseStaticFiles();  // <----- Serve static files
+        app.UseRouting();  // <----- Enable routing
+        app.UseAuthentication();  // <----- Enable authentication
+        app.UseAuthorization();  // <----- Enable authorization
 
-            app.UseAuthentication();
+        // -- Default route -- //
+        app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            app.UseAuthorization();
-
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-
-            app.Run();
-        }//end of main
-    }//end of class
-}//end of nmspc
+        app.Run();  // <----- Start application
+    }
+}
