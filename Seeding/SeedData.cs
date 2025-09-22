@@ -194,10 +194,10 @@ namespace Reservation.Seeding
                     }
 
                     await context.SaveChangesAsync();
-                    Console.WriteLine("Sample transactions seeded");
+                    Console.WriteLine("Sample transactions seeded"); // <----- Confirmation Message that sample transactions have been seeded if no data in the database
                 }
 
-                Console.WriteLine("Seeding completed successfully");
+                Console.WriteLine("Seeding completed successfully"); // <----- Seeding Completed Confirmation Message
             }
         }
     }
