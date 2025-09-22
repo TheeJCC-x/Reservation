@@ -2,6 +2,16 @@
 
 <h1>Bookings</h1>
 
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-controller="Bookings" asp-action="Index" method="get">
+    <p>
+        Enter name:<input type="text" name="SearchString"/>
+        <input type="submit" value="Search"/>
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -25,6 +35,11 @@
                 <td>@booking.Staff.StaffName</td>
                 <td>@booking.BookingDate.ToShortDateString()</td>
                 <td>@booking.BookingTime.ToShortTimeString()</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@booking.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@booking.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@booking.Id">Delete</a>
+                </td>
             </tr>
         }
     </tbody>

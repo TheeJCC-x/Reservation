@@ -1,71 +1,91 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Reservation.Data;
-using Reservation.Seeding;
+using Reservation.Seeding; 
 
 public class Program
 {
-    public static async Task Main(string[] args)  // <----- Application entry point
+    public static async Task Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);  // <----- Create app builder
+        var builder = WebApplication.CreateBuilder(args); 
 
         // -- Setup database connection -- //
         builder.Services.AddDbContext<ReservationContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("ReservationContext")));
 
-        builder.Services.AddControllersWithViews();  // <----- Add MVC support
+        builder.Services.AddControllersWithViews();
 
         // -- Configure authentication with cookies -- //
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
-                options.LoginPath = "/Account/Login";  // <----- Login page
-                options.AccessDeniedPath = "/Account/AccessDenied";  // <----- Access denied page
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);  // <----- Cookie expiration
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
             });
 
-        var app = builder.Build();  // <----- Build application
+        var app = builder.Build();
 
-        // -- Ensure database exists -- //
+        // -- Ensure database exists with detailed logging -- //
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<ReservationContext>();
-            context.Database.EnsureCreated();  // <----- Create database if missing
+            Console.WriteLine("Ensuring database exists...");
+            var created = context.Database.EnsureCreated();
+            Console.WriteLine($"Database ensured: {created}");
+
+            // Debug: Check current data before seeding
+            var bookingCount = await context.Bookings.CountAsync();
+            var tableCount = await context.Tables.CountAsync();
+            var staffCount = await context.Staff.CountAsync();
+            Console.WriteLine($"Current data - Bookings: {bookingCount}, Tables: {tableCount}, Staff: {staffCount}");
         }
 
-        // -- Seed database with sample data -- //
+        // -- Force seed data with detailed logging -- //
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
             try
             {
-                Console.WriteLine("Starting database seeding...");  // <----- Start seeding
-                await SeedData.Initialize(services);  // <----- Run seed data
-                Console.WriteLine("Database seeding completed.");  // <----- Completion message
+                Console.WriteLine("Force seeding data...");
+                await SeedData.Initialize(services);
+                Console.WriteLine("Database seeding completed.");
+
+                // Verify what was seeded
+                var context = services.GetRequiredService<ReservationContext>();
+                var finalBookingCount = await context.Bookings.CountAsync();
+                var finalTableCount = await context.Tables.CountAsync();
+                var finalStaffCount = await context.Staff.CountAsync();
+                Console.WriteLine($"Final data - Bookings: {finalBookingCount}, Tables: {finalTableCount}, Staff: {finalStaffCount}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Seeding error: {ex.Message}");  // <----- Error handling
+                Console.WriteLine($"Seeding error: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
             }
         }
 
         // -- Configure HTTP pipeline -- //
-        if (!app.Environment.IsDevelopment())  // <----- Production settings
+        if (!app.Environment.IsDevelopment()) 
         {
-            app.UseExceptionHandler("/Home/Error");  // <----- Error page
-            app.UseHsts();  // <----- HTTPS enforcement
+            app.UseExceptionHandler("/Home/Error");
+            app.UseHsts();
         }
 
-        app.UseHttpsRedirection();  // <----- HTTPS redirect
-        app.UseStaticFiles();  // <----- Serve static files
-        app.UseRouting();  // <----- Enable routing
-        app.UseAuthentication();  // <----- Enable authentication
-        app.UseAuthorization();  // <----- Enable authorization
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         // -- Default route -- //
         app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        app.Run();  // <----- Start application
+        app.Run();  
     }
 }
