@@ -7,7 +7,7 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args); 
+        var builder = WebApplication.CreateBuilder(args);  // <----- Create app builder
 
         // -- Setup database connection -- //
         builder.Services.AddDbContext<ReservationContext>(options =>
@@ -71,7 +71,7 @@ public class Program
         }
 
         // -- Configure HTTP pipeline -- //
-        if (!app.Environment.IsDevelopment()) 
+        if (!app.Environment.IsDevelopment())  // <----- Production settings
         {
             app.UseExceptionHandler("/Home/Error");
             app.UseHsts();
@@ -86,6 +86,6 @@ public class Program
         // -- Default route -- //
         app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        app.Run();  
+        app.Run();  // <----- Start application
     }
 }

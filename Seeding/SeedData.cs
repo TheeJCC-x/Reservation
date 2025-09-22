@@ -22,7 +22,9 @@ namespace Reservation.Seeding
 
                 // --- Accounts --- //
                 if (!await context.Account.AnyAsync(a => a.Username == "admin")) // <------ Check if admin exists
-                {                   
+                {
+                    string adminPasswordHashed = BCrypt.Net.BCrypt.HashPassword("password"); // <------ Hash the admin password
+                    // -- Add Admin Account //
                     context.Account.Add(new Account
                     {
                         Username = "admin",
@@ -34,6 +36,7 @@ namespace Reservation.Seeding
 
                 if (!await context.Account.AnyAsync(a => a.Username == "staff")) // <------ Check if staff exists
                 {
+                    string staffPasswordHashed = BCrypt.Net.BCrypt.HashPassword("password1"); // <------ Hash the staff password
                     // -- Add Staff Account //
                     context.Account.Add(new Account
                     {
@@ -46,11 +49,9 @@ namespace Reservation.Seeding
                 await context.SaveChangesAsync();
 
                 // --- Tables --- //
-                // Updated 22/09/2025: Removed Specific ID's due to Auto Incrementing for ID's
                 if (!await context.Tables.AnyAsync()) // <------ Check if the table exists
                 {
                     // -- Add Tables //
-                    Console.WriteLine("Seeding tables...");
                     context.Tables.AddRange(
                         new TableViewModel { Availability = true, Seats = 2, TableNumber = 1 },
                         new TableViewModel { Availability = true, Seats = 2, TableNumber = 2 },
@@ -170,13 +171,8 @@ namespace Reservation.Seeding
                             BookingId = aliceBooking.Id,
                             TotalAmount = 50.00m,
                             Status = "Confirmed"
-                        });
-                    }
-
-
-                    if (bobBooking != null) // <-----Check if booking transaction exists
-                    {
-                        context.Transactions.Add(new Transaction
+                        },
+                        new Transaction
                         {
                             BookingId = bobBooking.Id,
                             TotalAmount = 120.00m,
@@ -197,9 +193,9 @@ namespace Reservation.Seeding
                     await context.SaveChangesAsync();
                     Console.WriteLine("Sample transactions seeded"); // <----- Confirmation Message that sample transactions have been seeded if no data in the database
                 }
-
-                Console.WriteLine("Seeding completed successfully"); // <----- Seeding Completed Confirmation Message
-            } 
+                int changes = await context.SaveChangesAsync(); // <----- Save all changes to the database
+                Console.WriteLine($"Seeding completed. {changes} changes saved."); // <----- Seeding completed and saved message
+            }
         }
     }
 }
