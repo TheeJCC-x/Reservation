@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; // MAKE SURE THIS USING IS ADDED
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Reservation.Data;
 using Reservation.Models;
@@ -20,6 +20,32 @@ namespace Reservation.Controllers
             _context = context;
         }
 
+        // GET: Bookings
+        public async Task<IActionResult> Index(string sortOrder)
+        {
+            ViewData["CurrentSort"] = sortOrder;
+
+            var bookings = _context.Bookings
+                                  .Include(b => b.Table)
+                                  .Include(b => b.Staff)
+                                  .AsQueryable();
+
+            if (string.IsNullOrEmpty(sortOrder))
+            {
+                bookings = bookings.OrderBy(b => b.BookingDate).ThenBy(b => b.BookingTime);
+            }
+            else if (sortOrder == "name_asc")
+            {
+                bookings = bookings.OrderBy(b => b.CustomerName);
+            }
+            else if (sortOrder == "name_desc")
+            {
+                bookings = bookings.OrderByDescending(b => b.CustomerName);
+            }
+
+            return View(await bookings.ToListAsync());
+        }
+
         // GET: Bookings/Create
         public IActionResult Create(DateTime? date, int? tableID)
         {
@@ -30,7 +56,6 @@ namespace Reservation.Controllers
             if (date.HasValue) model.BookingDate = date.Value;
             if (tableID.HasValue) model.TableId = tableID.Value;
             return View(model);
-
         }
 
         // POST: Bookings/Create
@@ -50,7 +75,6 @@ namespace Reservation.Controllers
 
                     return View(booking);
                 }
-
 
                 _context.Add(booking);
                 await _context.SaveChangesAsync();
@@ -101,15 +125,6 @@ namespace Reservation.Controllers
                 .ToListAsync();
 
             return Ok(bookings);
-        }
-        public async Task<IActionResult> Index()
-        {
-            var bookings = await _context.Bookings
-                .Include(b => b.Table)
-                .Include(b => b.Staff)
-                .ToListAsync();
-
-            return View(bookings);
         }
 
         // Controller action to return a partial view for a given date
