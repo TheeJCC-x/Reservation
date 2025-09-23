@@ -56,7 +56,7 @@ namespace Reservation.Controllers
                 new Claim(ClaimTypes.Name, username),
             };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-             
+
             await HttpContext.SignInAsync( // <------ Sign in the user and create cookie
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity)

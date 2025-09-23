@@ -15,7 +15,7 @@ public class Program
 
         builder.Services.AddControllersWithViews();
 
-        // -- Configure authentication with cookies -- //
+        // --Configure authentication with cookies-- //
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
