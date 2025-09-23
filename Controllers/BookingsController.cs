@@ -126,6 +126,15 @@ namespace Reservation.Controllers
 
             return Ok(bookings);
         }
+        public async Task<IActionResult> Index()
+        {
+            var bookings = await _context.Bookings
+                .Include(b => b.Table)
+                .Include(b => b.Staff)
+                .ToListAsync();
+
+            return View(bookings);
+        }
 
         // Controller action to return a partial view for a given date
         [HttpGet]
@@ -170,5 +179,125 @@ namespace Reservation.Controllers
             // return partial view that is strongly-typed to DayLayoutViewModel
             return PartialView("_DayLayout", vm);
         }
+
+        //  Added by Jene (22/09/25) - Added code for details, edit, delete & Search Feature
+
+        // GET: Bookings Search Function
+        public async Task<IActionResult> IndexSearch(string searchString)
+        {
+            if (_context.Bookings == null)      // <--- checks if the Bookings in the database is null
+            {
+                return Problem("Entity set 'BookingContext.Bookings' is null");     // <--- return an error if null
+            }
+
+            var booking = from b in _context.Bookings       // <--- create LINQ query that selects all bookings
+                          select b;
+            if(!String.IsNullOrEmpty(searchString))         // <--- check if user entered a search string
+            {
+                // find the matching booking name
+                booking = booking.Where(s => s.CustomerName!.ToUpper().Contains(searchString.ToUpper()));
+            }
+            return View(await booking.ToListAsync());      // <--- execute query and return the results
+        }
+
+        //[HttpPost]
+        public string Search(string searchString, bool notUsed)  // <--- overload index method
+        {
+            return "From [HttpPost] Index: filter on" + searchString;   // <--- returns message
+        }
+
+        // GET: Bookings/Details
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var booking = await _context.Bookings
+                .Include(b => b.Staff)
+                .Include(b => b.Table)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (booking == null) return NotFound();
+
+            return View(booking);
+        }
+
+        // GET: Bookings/Edit
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null) return NotFound();
+
+            ViewBag.StaffList = new SelectList(_context.Staff, "StaffId", "StaffName", booking.StaffId);
+            ViewBag.TableList = new SelectList(_context.Tables, "Id", "TableNumber", booking.TableId);
+
+            return View(booking);
+        }
+
+        // POST: Bookings/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BookingDate,BookingTime,CustomerCount,CustomerName,CustomerPhoneNo,TableId,StaffId")] BookingViewModel booking)
+        {
+            if (id != booking.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(booking);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Bookings.Any(e => e.Id == booking.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.StaffList = new SelectList(_context.Staff, "StaffId", "StaffName", booking.StaffId);
+            ViewBag.TableList = new SelectList(_context.Tables, "Id", "TableNumber", booking.TableId);
+
+            return View(booking);
+        }
+
+        // GET: Bookings/Delete
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var booking = await _context.Bookings
+                .Include(b => b.Staff)
+                .Include(b => b.Table)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (booking == null) return NotFound();
+
+            return View(booking);
+        }
+
+        // POST: Bookings/Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking != null)
+            {
+                _context.Bookings.Remove(booking);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

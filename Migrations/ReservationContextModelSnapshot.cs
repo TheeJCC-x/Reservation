@@ -22,28 +22,6 @@ namespace Reservation.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Reservation.Models.Account", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("RememberMe")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Account", (string)null);
-                });
-
             modelBuilder.Entity("Reservation.Models.BookingViewModel", b =>
                 {
                     b.Property<int>("Id")
@@ -80,7 +58,7 @@ namespace Reservation.Migrations
 
                     b.HasIndex("TableId");
 
-                    b.ToTable("Bookings");
+                    b.ToTable("Bookings", (string)null);
                 });
 
             modelBuilder.Entity("Reservation.Models.Staff", b =>
@@ -98,7 +76,7 @@ namespace Reservation.Migrations
 
                     b.HasKey("StaffId");
 
-                    b.ToTable("Staff");
+                    b.ToTable("Staff", (string)null);
 
                     b.HasData(
                         new
@@ -137,7 +115,7 @@ namespace Reservation.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tables");
+                    b.ToTable("Tables", (string)null);
 
                     b.HasData(
                         new
@@ -224,7 +202,7 @@ namespace Reservation.Migrations
 
                     b.HasIndex("BookingId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transactions", (string)null);
                 });
 
             modelBuilder.Entity("Reservation.Models.BookingViewModel", b =>

@@ -22,12 +22,11 @@ namespace Reservation.Seeding
 
                 // --- Accounts --- //
                 if (!await context.Account.AnyAsync(a => a.Username == "admin")) // <------ Check if admin exists
-                {
-                    string adminPasswordHashed = BCrypt.Net.BCrypt.HashPassword("password"); // <------ Hash the admin password
+                {                   
                     context.Account.Add(new Account
                     {
                         Username = "admin",
-                        Password = adminPasswordHashed, // <------ Hashed Admin Password
+                        Password = BCrypt.Net.BCrypt.HashPassword("password"), // <------ Hashed Admin Password
                         RememberMe = false
                     });
                     Console.WriteLine("Admin account created"); // <----- Admin Account Successfully Created
@@ -35,11 +34,11 @@ namespace Reservation.Seeding
 
                 if (!await context.Account.AnyAsync(a => a.Username == "staff")) // <------ Check if staff exists
                 {
-                    string staffPasswordHashed = BCrypt.Net.BCrypt.HashPassword("password1"); // <------ Hash the staff password
+                    // -- Add Staff Account //
                     context.Account.Add(new Account
                     {
                         Username = "staff",
-                        Password = staffPasswordHashed, // <------ Hashed Staff Password
+                        Password = BCrypt.Net.BCrypt.HashPassword("password1"), // <------ Hashed Staff Password
                         RememberMe = false
                     });
                     Console.WriteLine("Staff account created"); // <----- Staff Account Successfully Created
@@ -48,8 +47,9 @@ namespace Reservation.Seeding
 
                 // --- Tables --- //
                 // Updated 22/09/2025: Removed Specific ID's due to Auto Incrementing for ID's
-                if (!await context.Tables.AnyAsync())
+                if (!await context.Tables.AnyAsync()) // <------ Check if the table exists
                 {
+                    // -- Add Tables //
                     Console.WriteLine("Seeding tables...");
                     context.Tables.AddRange(
                         new TableViewModel { Availability = true, Seats = 2, TableNumber = 1 },
@@ -173,6 +173,7 @@ namespace Reservation.Seeding
                         });
                     }
 
+
                     if (bobBooking != null) // <-----Check if booking transaction exists
                     {
                         context.Transactions.Add(new Transaction
@@ -198,7 +199,7 @@ namespace Reservation.Seeding
                 }
 
                 Console.WriteLine("Seeding completed successfully"); // <----- Seeding Completed Confirmation Message
-            }
+            } 
         }
     }
 }

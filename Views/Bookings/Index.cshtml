@@ -6,12 +6,6 @@
 
 <h1>Bookings</h1>
 
-<div class="mb-3">
-    <a asp-action="Index" asp-route-sortOrder="name_asc" class="btn btn-primary btn-sm me-1">A → Z</a>
-    <a asp-action="Index" asp-route-sortOrder="name_desc" class="btn btn-primary btn-sm me-1">Z → A</a>
-    <a asp-action="Index" class="btn btn-secondary btn-sm">Sort by Date</a>
-</div>
-
 <table class="table">
     <thead>
         <tr>
@@ -35,6 +29,11 @@
                 <td>@(booking.Staff?.StaffName ?? "—")</td>
                 <td>@booking.BookingDate.ToShortDateString()</td>
                 <td>@booking.BookingTime.ToShortTimeString()</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@booking.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@booking.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@booking.Id">Delete</a>
+                </td>
             </tr>
         }
     </tbody>
