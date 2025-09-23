@@ -21,15 +21,79 @@ namespace Reservation.Controllers
         }
 
         // GET: Bookings
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string searchString, string sortOrder)
         {
+            ViewData["CurrentFilter"] = searchString;
             ViewData["CurrentSort"] = sortOrder;
 
-            var bookings = _context.Bookings
-                                  .Include(b => b.Table)
-                                  .Include(b => b.Staff)
-                                  .AsQueryable();
+            // Start IQueryable so we can apply filters & sorts before querying DB
+            var query = _context.Bookings
+                        .Include(b => b.Table)
+                        .Include(b => b.Staff)
+                        .AsQueryable();
 
+            // Filter (search)
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                var s = searchString.Trim();
+                query = query.Where(b => b.CustomerName != null && b.CustomerName.Contains(s));
+            }
+
+            // Sort
+            if (string.IsNullOrEmpty(sortOrder))
+            {
+                query = query.OrderBy(b => b.BookingDate).ThenBy(b => b.BookingTime);
+            }
+            else if (sortOrder == "name_asc")
+            {
+                query = query.OrderBy(b => b.CustomerName);
+            }
+            else if (sortOrder == "name_desc")
+            {
+                query = query.OrderByDescending(b => b.CustomerName);
+            }
+
+            // Project entity -> view model (so your view uses BookingViewModel safely)
+            var model = await query
+                .Select(b => new BookingViewModel
+                {
+                    Id = b.Id,
+                    BookingDate = b.BookingDate,
+                    BookingTime = b.BookingTime,
+                    CustomerCount = b.CustomerCount,
+                    CustomerName = b.CustomerName,
+                    CustomerPhoneNo = b.CustomerPhoneNo,
+                    TableId = b.TableId,
+                    StaffId = b.StaffId,
+                    Table = b.Table,   // if your VM has navigation props; otherwise map specific fields
+                    Staff = b.Staff
+                })
+                .ToListAsync();
+
+            return View(model);
+        }
+
+
+        // Separate action for sorting (keeps searchString so sorting a filtered list works)
+        // Call this from your view's sort links (asp-action="Sort")
+        public async Task<IActionResult> Sort(string sortOrder, string searchString)
+        {
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["CurrentFilter"] = searchString;
+
+            var bookings = _context.Bookings
+                                   .Include(b => b.Table)
+                                   .Include(b => b.Staff)
+                                   .AsQueryable();
+
+            // Apply search filter if provided
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                var s = searchString.Trim();
+                bookings = bookings.Where(b => b.CustomerName != null && b.CustomerName.Contains(s));
+            }
+
+            // Apply requested sort
             if (string.IsNullOrEmpty(sortOrder))
             {
                 bookings = bookings.OrderBy(b => b.BookingDate).ThenBy(b => b.BookingTime);
@@ -43,7 +107,7 @@ namespace Reservation.Controllers
                 bookings = bookings.OrderByDescending(b => b.CustomerName);
             }
 
-            return View(await bookings.ToListAsync());
+            return View("Index", await bookings.ToListAsync());
         }
 
         // GET: Bookings/Create
@@ -126,15 +190,6 @@ namespace Reservation.Controllers
 
             return Ok(bookings);
         }
-        public async Task<IActionResult> Index()
-        {
-            var bookings = await _context.Bookings
-                .Include(b => b.Table)
-                .Include(b => b.Staff)
-                .ToListAsync();
-
-            return View(bookings);
-        }
 
         // Controller action to return a partial view for a given date
         [HttpGet]
@@ -182,28 +237,27 @@ namespace Reservation.Controllers
 
         //  Added by Jene (22/09/25) - Added code for details, edit, delete & Search Feature
 
-        // GET: Bookings Search Function
+        // GET: Bookings Search Function (you can keep this if you want a separate search page)
         public async Task<IActionResult> IndexSearch(string searchString)
         {
-            if (_context.Bookings == null)      // <--- checks if the Bookings in the database is null
+            if (_context.Bookings == null)
             {
-                return Problem("Entity set 'BookingContext.Bookings' is null");     // <--- return an error if null
+                return Problem("Entity set 'BookingContext.Bookings' is null");
             }
 
-            var booking = from b in _context.Bookings       // <--- create LINQ query that selects all bookings
+            var booking = from b in _context.Bookings
                           select b;
-            if(!String.IsNullOrEmpty(searchString))         // <--- check if user entered a search string
+            if (!String.IsNullOrEmpty(searchString))
             {
-                // find the matching booking name
                 booking = booking.Where(s => s.CustomerName!.ToUpper().Contains(searchString.ToUpper()));
             }
-            return View(await booking.ToListAsync());      // <--- execute query and return the results
+            return View(await booking.ToListAsync());
         }
 
         //[HttpPost]
-        public string Search(string searchString, bool notUsed)  // <--- overload index method
+        public string Search(string searchString, bool notUsed)
         {
-            return "From [HttpPost] Index: filter on" + searchString;   // <--- returns message
+            return "From [HttpPost] Index: filter on" + searchString;
         }
 
         // GET: Bookings/Details
