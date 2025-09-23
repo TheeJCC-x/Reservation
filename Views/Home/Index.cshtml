@@ -187,12 +187,53 @@
                 window.location.href = '/Bookings/Create' + (date ? '?date=' + date : '');
             }
 
-            function showBookingDetails(event) {
-                alert('Booking Details:\n' +
-                      'Customer: ' + (event.extendedProps.customerName || 'N/A') + '\n' +
-                      'Phone: ' + (event.extendedProps.customerPhone || 'N/A') + '\n' +
-                      'Guests: ' + (event.extendedProps.customerCount || 'N/A') + '\n' +
-                      'Table: ' + (event.extendedProps.tableNumber || 'N/A'));
+            function showBookingDetails(event) { // <----- Updated by Byron (23/09/2025)
+                // Custom Modal for booking details instead of using alert (Secure Practice to hid the localhost:XXXX text)
+                const modalHtml = `
+                    <div class="modal fade" id="bookingDetailsModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <!-- Modal Title -->
+                                    <h5 class="modal-title">Booking Details</h5>
+                                    <!-- Close Button -->
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Display the customers name or show N/A if the name is missing -->
+                                    <p><strong>Customer:</strong> ${event.extendedProps.customerName || 'N/A'}</p>
+                                    <!-- Display the customers phone number or show N/A if the name is missing -->
+                                    <p><strong>Phone:</strong> ${event.extendedProps.customerPhone || 'N/A'}</p>
+                                    <!-- Display the amount of guests or show N/A if the name is missing -->
+                                    <p><strong>Guests:</strong> ${event.extendedProps.customerCount || 'N/A'}</p>
+                                    <!-- Display the table number or show N/A if the name is missing -->
+                                    <p><strong>Table:</strong> ${event.extendedProps.tableNumber || 'N/A'}</p>
+                                    <!-- Display the start time of the booking -->
+                                    <p><strong>Time:</strong> ${event.start.toLocaleString()}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <!-- Close button for the modal -->
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <!-- Link button to view the full booking details -->
+                                    <a href="/Bookings/Details/${event.id}" class="btn btn-primary">View Full Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+    
+                // Remove existing modal if any
+                const existingModal = document.getElementById('bookingDetailsModal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+    
+                // Add new modal to DOM
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
+                modal.show();
             }
         });
     </script>

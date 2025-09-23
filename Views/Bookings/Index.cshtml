@@ -12,6 +12,15 @@
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 
+<!-- Success Alert (Updated by Byron 23/09/2025) -->
+@if (TempData["BookingSuccess"] != null && (bool)TempData["BookingSuccess"]) // <----- Check if the booking was successful
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">  <!-- Display a green success alert -->
+        <strong>Success!</strong> @TempData["BookingMessage"] <!-- Display the successful booking message -->
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button> <!-- Close Alert Button -->
+    </div>
+}
+
 <!-- Search form -->
 <form asp-controller="Bookings" asp-action="Index" method="get" class="form-inline mb-3">
     <div class="form-group">
