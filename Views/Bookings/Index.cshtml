@@ -12,38 +12,21 @@
     <a asp-action="Create" class="btn btn-primary">Create New</a>
 </p>
 
-<!-- Search form -->
 <form asp-controller="Bookings" asp-action="Index" method="get" class="form-inline mb-3">
     <div class="form-group">
         <label for="searchString" class="sr-only">Enter name:</label>
-        <input type="text" id="searchString" name="searchString"
-               value="@(currentFilter ?? "")"
-               class="form-control mr-2"
-               placeholder="Enter name" />
+        <input type="text" id="searchString" name="searchString" value="@(currentFilter ?? "")" class="form-control mr-2" placeholder="Enter name" />
         <input type="hidden" name="sortOrder" value="@(currentSort ?? "")" />
         <input type="submit" value="Search" class="btn btn-secondary" />
     </div>
 </form>
 
-<!-- Sorting buttons -->
 <div class="mb-2">
-    <a asp-action="Index"
-       asp-route-sortOrder="name_asc"
-       asp-route-searchString="@(currentFilter ?? "")"
-       class="btn btn-sm btn-outline-primary">A → Z</a>
-
-    <a asp-action="Index"
-       asp-route-sortOrder="name_desc"
-       asp-route-searchString="@(currentFilter ?? "")"
-       class="btn btn-sm btn-outline-primary">Z → A</a>
-
-    <a asp-action="Index"
-       asp-route-sortOrder=""
-       asp-route-searchString="@(currentFilter ?? "")"
-       class="btn btn-sm btn-outline-secondary">Sort by Date</a>
+    <a asp-action="Index" asp-route-sortOrder="name_asc" asp-route-searchString="@(currentFilter ?? "")" class="btn btn-sm btn-outline-primary">A → Z</a>
+    <a asp-action="Index" asp-route-sortOrder="name_desc" asp-route-searchString="@(currentFilter ?? "")" class="btn btn-sm btn-outline-primary">Z → A</a>
+    <a asp-action="Index" asp-route-sortOrder="" asp-route-searchString="@(currentFilter ?? "")" class="btn btn-sm btn-outline-secondary">Sort by Date</a>
 </div>
 
-<!-- Bookings table -->
 <table class="table table-striped">
     <thead>
         <tr>
@@ -87,7 +70,7 @@
     </tbody>
 </table>
 
-<!-- Modal placeholder -->
+<!-- single modal placeholder used by calendar/day layout -->
 <div class="modal fade" id="dayModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content"></div>
