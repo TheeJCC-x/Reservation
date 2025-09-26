@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 // Updated by Byron (21/09/2025)
 // Updated by Byron (22/09/2025) -- *Removed Specific ID's from tables due to ID Auto-Increments (Fixing Database Table Issue)
+// Updated by Jene (24/09/2025) -- Removed the Admin account, Customer and Transaction seed data.
 
 namespace Reservation.Seeding
 {
@@ -20,18 +21,6 @@ namespace Reservation.Seeding
             {
                 Console.WriteLine("Starting database seeding..."); // <------ Start Seeding Message
 
-                // --- Accounts --- //
-                if (!await context.Account.AnyAsync(a => a.Username == "admin")) // <------ Check if admin exists
-                {                   
-                    context.Account.Add(new Account
-                    {
-                        Username = "admin",
-                        Password = BCrypt.Net.BCrypt.HashPassword("password"), // <------ Hashed Admin Password
-                        RememberMe = false
-                    });
-                    Console.WriteLine("Admin account created"); // <----- Admin Account Successfully Created
-                }
-
                 if (!await context.Account.AnyAsync(a => a.Username == "staff")) // <------ Check if staff exists
                 {
                     // -- Add Staff Account //
@@ -42,8 +31,8 @@ namespace Reservation.Seeding
                         RememberMe = false
                     });
                     Console.WriteLine("Staff account created"); // <----- Staff Account Successfully Created
-                }
-                await context.SaveChangesAsync();
+                    await context.SaveChangesAsync();
+                }                
 
                 // --- Tables --- //
                 // Updated 22/09/2025: Removed Specific ID's due to Auto Incrementing for ID's

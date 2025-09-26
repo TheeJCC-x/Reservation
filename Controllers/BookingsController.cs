@@ -154,6 +154,10 @@ namespace Reservation.Controllers
                 _context.Transactions.Add(transaction);
                 await _context.SaveChangesAsync();
 
+                // Add success message
+                TempData["BookingSuccess"] = true;
+                TempData["BookingMessage"] = $"Booking for {booking.CustomerName} created successfully!";
+
                 return RedirectToAction(nameof(Index));
             }
 
