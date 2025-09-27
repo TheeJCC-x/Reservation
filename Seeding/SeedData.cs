@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 // Updated by Byron (21/09/2025)
 // Updated by Byron (22/09/2025) -- *Removed Specific ID's from tables due to ID Auto-Increments (Fixing Database Table Issue)
 // Updated by Jene (24/09/2025) -- Removed the Admin account, Customer and Transaction seed data.
+// Updated by Jiteesh (27/09/2025) -- Added test login
 
 namespace Reservation.Seeding
 {
@@ -32,7 +33,21 @@ namespace Reservation.Seeding
                     });
                     Console.WriteLine("Staff account created"); // <----- Staff Account Successfully Created
                     await context.SaveChangesAsync();
-                }                
+                }
+                
+                // --- Add Test User for Automated Testing --- //
+                if (!await context.Account.AnyAsync(a => a.Username == "testuser_autotest")) // <------ Check if test user exists
+                {
+                    // -- Add Test User Account //
+                    context.Account.Add(new Account
+                    {
+                        Username = "testuser_autotest",
+                        Password = BCrypt.Net.BCrypt.HashPassword("Test@123"), // <------ Hashed Test Password
+                        RememberMe = false
+                    });
+                    Console.WriteLine("Test user account created"); // <----- Test User Account Successfully Created
+                    await context.SaveChangesAsync();
+                }
 
                 // --- Tables --- //
                 // Updated 22/09/2025: Removed Specific ID's due to Auto Incrementing for ID's
